@@ -1,9 +1,9 @@
 package com.example.toastondismiss;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +29,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void showToast() {
-        Log.d("ToastOnDismiss", "showToast()");
         final TextView text = (TextView)findViewById(R.id.text);
         text.setText("Showing Toast ...");
 
@@ -47,6 +46,34 @@ public class MainActivity extends ActionBarActivity {
                 text.setText("Toast on Dismiss");
             }
         };
+        toast.show();
+    }
+
+    static class ToastViewWrapper extends FrameLayout {
+        ToastViewWrapper(Activity activity) {
+            super(activity);
+        }
+
+        @Override
+        public void onDetachedFromWindow() {
+            super.onDetachedFromWindow();
+            // Toastが終了したあとの処理をする
+
+            final TextView text = (TextView)((Activity)getContext()).findViewById(R.id.text);
+            text.setText("Toast on Dismiss");
+        }
+    }
+
+    private void showToast2() {
+        final TextView text = (TextView)findViewById(R.id.text);
+        text.setText("Showing Toast ...");
+
+        final Toast toast = Toast.makeText(this, "Hello, world", Toast.LENGTH_LONG);
+        final ToastViewWrapper w = new ToastViewWrapper(this);
+
+        w.addView(toast.getView());
+        toast.setView(w);
+
         toast.show();
     }
 
@@ -90,7 +117,7 @@ public class MainActivity extends ActionBarActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showToast();
+                    showToast2();
                 }
             });
 
